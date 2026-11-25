@@ -3,7 +3,7 @@ title: Documentation
 description: Skia Graphite on WebGPU, compiled to WebAssembly.
 ---
 
-Two short guides, then examples. Each example runs live above its code. It is a complete module that expects a page with a 512 by 512 `<canvas>`, served over HTTPS or from localhost, in a browser with WebGPU.
+Two short guides, then examples. Each example runs live above its code. It is a complete module that expects a page with a 512 by 512 `<canvas>`, in a browser with WebGPU. Without a page, see [Headless](./headless.mdx).
 
 The API is a canvas, paints and paths, in the style of CanvasKit, with plain numbers for geometry and CSS strings for colors.
 
@@ -29,6 +29,9 @@ The API is a canvas, paints and paths, in the style of CanvasKit, with plain num
   </Card>
   <Card title="Offscreen and export" href="/docs/export">
     Draw to a surface that is not on screen, use it as an image and save it as a PNG.
+  </Card>
+  <Card title="Headless" href="/docs/headless">
+    Draw without a page, in Node on Dawn, and save the result as a PNG.
   </Card>
 </Cards>
 

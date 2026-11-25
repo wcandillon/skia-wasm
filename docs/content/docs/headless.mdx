@@ -1,0 +1,64 @@
+---
+title: Headless
+description: Draw without a page, in Node on Dawn, and save the result as a PNG.
+---
+
+skia-wasm draws on any `GPUDevice`, not only the one of a page. Outside a browser, a WebGPU implementation provides it:
+
+- **Node**, with [Dawn's bindings](https://www.npmjs.com/package/webgpu) (the `webgpu` package). This is how the pixel tests of this repository run, and it works well.
+- **Deno**, which implements WebGPU with [wgpu](https://wgpu.rs). It is expected to work well too: wgpu is also the implementation of Firefox, where skia-wasm runs.
+
+There is no canvas to draw to: draw to an offscreen surface, or to a `GPUTexture` of yours, then read its pixels or encode them.
+
+## Node
+
+```sh
+npm install skia-wasm webgpu
+```
+
+```ts
+import { readFile, writeFile } from "node:fs/promises";
+
+import { Skia } from "skia-wasm";
+import { create, globals } from "webgpu";
+
+// The classes and constants of WebGPU, which the module looks for on globalThis.
+Object.assign(globalThis, globals);
+
+// Dawn lives as long as what create() returns: keep it referenced while the
+// device is in use.
+const gpu = create([]);
+const adapter = await gpu.requestAdapter();
+const device = await adapter!.requestDevice();
+
+// The module is built for the web, where it fetches its wasm: give it the
+// bytes instead.
+const { default: factory } = await import("skia-wasm/skia-wasm.js");
+const wasmBinary = await readFile(
+  new URL(import.meta.resolve("skia-wasm/skia-wasm.wasm"))
+);
+const sk = await Skia.init({
+  device,
+  module: () => factory({ wasmBinary }),
+});
+
+const surface = sk.offscreenSurface(512, 512);
+const canvas = surface.getCanvas();
+canvas.clear("white");
+canvas.drawCircle(256, 256, 128, sk.paint({ color: "#3b82f6" }));
+surface.flush();
+
+// The pixels come back from the GPU later: encoding is asynchronous.
+const png = await surface.snapshot().encode("png");
+await writeFile("circle.png", png);
+
+device.destroy();
+```
+
+`image.readPixels()` gives the RGBA pixels instead of a file, and `sk.surface(texture)` draws to a texture you made with `device.createTexture()`, as the [pixel tests](https://github.com/wcandillon/skia-wasm/tree/main/src/__tests__) do.
+
+Fonts work as in a browser: read the file and pass its bytes to `sk.typeface()`. There are no system fonts.
+
+## Deno
+
+Deno has `navigator.gpu`, so the code of a browser applies: request an adapter and a device, then call `Skia.init({ device })`. If the module cannot find its wasm, pass the bytes as above, with `Deno.readFile()`.

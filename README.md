@@ -2,13 +2,11 @@
 
 Skia Graphite on WebGPU, compiled to WebAssembly.
 
-Skia's Graphite renderer runs on the `GPUDevice` of the page, through Dawn's WebGPU bindings for Emscripten. It is built from the same Skia and Dawn revisions as the native binaries of [React Native Skia](https://github.com/wcandillon/react-native-skia).
+Skia's Graphite renderer runs on a `GPUDevice` of yours, through Dawn's WebGPU bindings for Emscripten.
 
-**This is experimental.** There is no stable API yet: the package is at 0.x, and a new minor version can change it. The API is in the style of CanvasKit: a canvas, paints and paths. [BENCHMARK.md](./BENCHMARK.md) measures it against `canvaskit-wasm`, on a laptop and on a phone.
+**This is experimental.** There is no stable API yet: the package is at 0.x, and a new minor version can change it. The API is in the style of CanvasKit: a canvas, paints and paths.
 
-**Documentation:** [wcandillon.github.io/skia-wasm](https://wcandillon.github.io/skia-wasm/docs/). Two short guides ([getting started](https://wcandillon.github.io/skia-wasm/docs/getting-started/) and [conventions](https://wcandillon.github.io/skia-wasm/docs/conventions/)), then examples that run live above their code.
-
-This is an independent open source project. It is not an official Skia package.
+**Documentation:** [wcandillon.github.io/skia-wasm](https://wcandillon.github.io/skia-wasm/docs/). Two short guides ([getting started](https://wcandillon.github.io/skia-wasm/docs/getting-started/) and [conventions](https://wcandillon.github.io/skia-wasm/docs/conventions/)), a [headless](https://wcandillon.github.io/skia-wasm/docs/headless/) guide, then examples that run live above their code.
 
 ## Installing
 
@@ -18,7 +16,7 @@ npm install skia-wasm
 
 The package is three files that go together, in `dist/lib`: `index.js`, the library; `skia-wasm.js`, the module it loads; and `skia-wasm.wasm`. Served as they are, they find each other. A bundler moves the library into a bundle of yours: copy the two other files next to that bundle, or tell `Skia.init()` where they are with its `module` option. [Getting started](https://wcandillon.github.io/skia-wasm/docs/getting-started/) shows both.
 
-It needs a browser with WebGPU, and a page served over HTTPS or from localhost.
+It runs on any WebGPU implementation, not only in a browser: it runs well headless in Node with Dawn's bindings ([webgpu](https://www.npmjs.com/package/webgpu)), and is expected to work well in Deno, whose WebGPU is wgpu, the implementation of Firefox, where it runs. [Headless](https://wcandillon.github.io/skia-wasm/docs/headless/) shows how.
 
 ## The API
 
