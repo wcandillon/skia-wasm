@@ -100,7 +100,8 @@ The emsdk inside a React Native Skia checkout works too: `externals/skia/third_p
 ```sh
 yarn install
 yarn test             # build the module and run its tests
-yarn test:pixels      # only the pixel tests, on what was built last
+yarn test:node        # only the snapshot tests on Dawn in Node, on what was built last
+yarn test:web         # only the browser test in Chromium, on what was built last
 yarn bench            # build and run the benchmark in a Chrome window
 yarn bench-report bench/results/laptop-spin.json
                       # the tables of a run
@@ -109,7 +110,7 @@ yarn build && yarn build-bench && yarn serve
                       # http://localhost:8790/bench/index.html
 ```
 
-`UPDATE_SNAPSHOTS=1 yarn test:pixels` writes the PNGs of the pixel tests. One that fails leaves what it drew and the difference in `test-results/pixels`. They need a GPU: a software adapter is refused.
+`UPDATE_SNAPSHOTS=1 yarn test:node` writes the PNGs of the snapshot tests. One that fails leaves what it drew and the difference in `test-results/pixels`. They need a GPU: a software adapter is refused.
 
 The browser test needs Playwright's Chromium (`yarn playwright install chromium`); the benchmark uses the installed Google Chrome, or Chrome on an Android phone (`yarn bench --target=android`, see `scripts/run-bench.ts`).
 
